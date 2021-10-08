@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  ${project.artifactId}
+  labels:
+    app:  ${project.artifactId}
+    commit: ${git.commit.id.describe}
+spec:
+  selector:
+    matchLabels:
+      app: ${project.artifactId}
+  replicas: ${deployment.replicas}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  ${project.artifactId}
+    spec:
+      containers:
+      - name:  ${project.artifactId}minikube
+        resources:
+          requests:
+            cpu: 250m
+            memory: 128Mi
+          limits:
+            cpu: 1000m
+            memory: 256Mi
+        env:
+        - name: JAVA_OPTS
+          value: "-Xms128m -Xmx128m"
+        - name: SPRING_PROFILES_ACTIVE
+          value: "kube"
+#        - name: RABBITMQ_URL
+#          valueFrom:
+#            configMapKeyRef:
+#              name: ${project.artifactId}
+#              key: spring.rabbitmq.addresses
+#        - name: RABBITMQ_USER
+#          valueFrom:
+#            secretKeyRef:
+#              name: ${project.artifactId}
+#              key: spring.rabbitmq.username
+#        - name: RABBITMQ_PASS
+#          valueFrom:
+#            secretKeyRef:
+#              name: ${project.artifactId}
+#              key: spring.rabbitmq.password
+        ports:
+        - containerPort:  8080
+        volumeMounts:
+        - name: config
+          mountPath: /deployments/config
+          readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: ${project.artifactId}
+            items:
+              - key: application.yml
+                path: application.yml

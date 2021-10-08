@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: sgl-config-server
+  cloud:
+    bus:
+      enabled: true
+    config:
+      server:
+        git:
+          uri: https://github.com/llsilvas/sgl-config-repo
+          force-pull: false
+          timeout: 4
+#          repos:
+#            development:
+#              pattern:
+#                - '*/*dev'
+#              uri: https://github.com/llsilvas/sgl-config-repo-dev
+#          clone-on-start: true
+          basedir: target/config
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  security:
+    enabled: false
+server:
+  port: 8888
+
+logging:
+  level:
+    root: DEBUG

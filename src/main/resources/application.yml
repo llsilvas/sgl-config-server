@@ -1,0 +1,31 @@
+spring:
+  main:
+    log-startup-info: false
+  config:
+    activate:
+      on-profile: docker
+
+  rabbitmq:
+    username: guest
+    password: guest
+    port: 5672
+    addresses: rabbitmq
+
+
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: kube
+      on-cloud-platform: kubernetes
+
+  rabbitmq:
+    username: guest
+    password: guest
+    addresses: rabbitmq
+    port: 5672
+  cloud:
+    discovery:
+      enabled: true
